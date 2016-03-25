@@ -1,0 +1,15 @@
+#!/usr/bin/with-contenv bash
+
+set -x
+
+groupdel nginx >/dev/null 2>&1
+groupadd --force --gid=${AUTOCLEANDAV_GID} nginx
+userdel nginx >/dev/null 2>&1
+useradd --no-create-home --home-dir=/data --no-user-group --non-unique --gid=${AUTOCLEANDAV_GID} --shell=/bin/nologin --uid=${AUTOCLEANDAV_UID} nginx
+
+# FIXME: lifetime
+
+chown -R nginx:nginx /data
+
+echo "# GENERATED FROM /opt/nginx/conf/nginx.conf.template" >/opt/nginx/conf/nginx.conf 
+cat /opt/nginx/conf/nginx.conf.template |envtpl >>/opt/nginx/conf/nginx.conf

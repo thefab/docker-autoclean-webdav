@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec /opt/nginx/sbin/nginx -c /opt/nginx/conf/nginx.conf
