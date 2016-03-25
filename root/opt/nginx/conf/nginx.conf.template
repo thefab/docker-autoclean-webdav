@@ -2,41 +2,43 @@ user nginx nginx;
 worker_processes  {{AUTOCLEANDAV_NGINX_WORKER_PROCESSES}};
 daemon off;
 
-#error_log  logs/error.log;
-#error_log  logs/error.log  notice;
-#error_log  logs/error.log  info;
-
-#pid        logs/nginx.pid;
-
+{% if AUTOCLEANDAV_NGINX_ERRORLOG_FILE == "1" %}
+    error_log logs/error.log error;
+{% endif %}
+{% if AUTOCLEANDAV_NGINX_ERRORLOG_SYSLOG == "1" %}
+    error_log syslog:server=127.0.0.1,facility={{AUTOCLEANDAV_NGINX_SYSLOG_FACILITY}},tag={{AUTOCLEANDAV_NGINX_SYSLOG_TAG}},severity=error error;
+{% else %}
+    {% if AUTOCLEANDAV_NGINX_ERRORLOG_FILE == "0" %}
+        error_log /dev/null error;
+    {% endif %}
+{% endif %}
 
 events {
     worker_connections  {{AUTOCLEANDAV_NGINX_WORKER_CONNECTIONS}};
 }
 
-
 http {
     include       mime.types;
     default_type  application/octet-stream;
 
-    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-    #                  '$status $body_bytes_sent "$http_referer" '
-    #                  '"$http_user_agent" "$http_x_forwarded_for"';
-
-    #access_log  logs/access.log  main;
+    {% if AUTOCLEANDAV_NGINX_ACCESSLOG_FILE == "1" %}
+        access_log  logs/access.log  combined;
+    {% endif %}
+    {% if AUTOCLEANDAV_NGINX_ACCESSLOG_SYSLOG == "1" %}
+        access_log syslog:server=127.0.0.1,facility={{AUTOCLEANDAV_NGINX_SYSLOG_FACILITY}},tag={{AUTOCLEANDAV_NGINX_SYSLOG_TAG}},severity=info combined;
+    {% else %}
+        {% if AUTOCLEANDAV_NGINX_ACCESSLOG_FILE == "0" %}
+            access_log off;
+        {% endif %}
+    {% endif %}
 
     sendfile        on;
-    #tcp_nopush     on;
 
-    #keepalive_timeout  0;
     keepalive_timeout  65;
-
-    #gzip  on;
 
     server {
         listen       80;
         server_name  localhost;
-
-        #access_log  logs/host.access.log  main;
 
         location / {
             root   html;

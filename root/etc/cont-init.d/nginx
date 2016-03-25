@@ -1,7 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-set -x
-
 groupdel nginx >/dev/null 2>&1
 groupadd --force --gid=${AUTOCLEANDAV_GID} nginx
 userdel nginx >/dev/null 2>&1
@@ -9,6 +7,9 @@ useradd --no-create-home --home-dir=/data --no-user-group --non-unique --gid=${A
 
 # FIXME: lifetime
 
+mkdir -p /data/logs >/dev/null 2>&1
+mkdir -p /data/storage >/dev/null 2>&1
+mkdir -p /data/temp >/dev/null 2>&1
 chown -R nginx:nginx /data
 
 echo "# GENERATED FROM /opt/nginx/conf/nginx.conf.template" >/opt/nginx/conf/nginx.conf 
