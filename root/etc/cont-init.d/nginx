@@ -7,10 +7,12 @@ useradd --no-create-home --home-dir=/data --no-user-group --non-unique --gid=${A
 
 # FIXME: lifetime
 
-mkdir -p /data/logs >/dev/null 2>&1
+mkdir -p /logs >/dev/null 2>&1
 mkdir -p /data/storage >/dev/null 2>&1
 mkdir -p /data/temp >/dev/null 2>&1
+mkdir -p /data/temp/clientbody >/dev/null 2>&1
 chown -R nginx:nginx /data
+chown -R nginx:nginx /logs
 
 echo "# GENERATED FROM /opt/nginx/conf/nginx.conf.template" >/opt/nginx/conf/nginx.conf 
 cat /opt/nginx/conf/nginx.conf.template |envtpl >>/opt/nginx/conf/nginx.conf
