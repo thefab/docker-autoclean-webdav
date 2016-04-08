@@ -5,7 +5,18 @@ groupadd --force --gid=${AUTOCLEANDAV_GID} nginx
 userdel nginx >/dev/null 2>&1
 useradd --no-create-home --home-dir=/data --no-user-group --non-unique --gid=${AUTOCLEANDAV_GID} --shell=/bin/nologin --uid=${AUTOCLEANDAV_UID} nginx
 
-# FIXME: lifetime
+if test ${AUTOCLEANDAV_LIFETIME} -gt 0; then
+    if test ${AUTOCLEANDAV_LIFETIME} -lt 10; then
+        WHEN="* * * * *"
+    elif test ${AUTOCLEANDAV_LIFETIME} -lt 50; then
+        WHEN="*/5 * * * *"
+    elif test ${AUTOCLEANDAV_LIFETIME} -lt 14400; then
+        WHEN="0 * * * *"
+    else
+        WHEN="0 0 * * *"
+    fi
+    echo "${WHEN} root /usr/local/bin/autoclean_webdav_cleaning.sh >/dev/null 2>&1" >/etc/cron.d/autoclean_dav
+fi
 
 mkdir -p /logs >/dev/null 2>&1
 mkdir -p /data/storage >/dev/null 2>&1
@@ -14,5 +25,5 @@ mkdir -p /data/temp/clientbody >/dev/null 2>&1
 chown -R nginx:nginx /data
 chown -R nginx:nginx /logs
 
-echo "# GENERATED FROM /opt/nginx/conf/nginx.conf.template" >/opt/nginx/conf/nginx.conf 
-cat /opt/nginx/conf/nginx.conf.template |envtpl >>/opt/nginx/conf/nginx.conf
+echo "# GENERATED FROM /etc/nginx.conf.template" >/etc/nginx.conf
+cat /etc/nginx.conf.template |envtpl >>/etc/nginx.conf

@@ -11,5 +11,3 @@ cd nginx-${VERSION} ||exit 1
 ./configure --prefix=/opt/nginx --without-mail_pop3_module --without-mail_imap_module --without-mail_smtp_module --without-http_uwsgi_module --without-http_fastcgi_module --without-http_scgi_module --without-http_memcached_module --without-http_empty_gif_module --with-threads --with-file-aio --with-http_realip_module --with-http_dav_module --with-http_stub_status_module
 make
 make install
-rm -Rf /opt/nginx/conf
-mkdir /opt/nginx/conf
