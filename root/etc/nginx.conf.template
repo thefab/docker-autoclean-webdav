@@ -1,9 +1,9 @@
-user nginx nginx;
+user {{AUTOCLEANDAV_USER_NAME}} {{AUTOCLEANDAV_GROUP_NAME}};
 worker_processes  {{AUTOCLEANDAV_NGINX_WORKER_PROCESSES}};
 daemon off;
 
 {% if AUTOCLEANDAV_NGINX_ERRORLOG_FILE == "1" %}
-    error_log /logs/error.log error;
+    error_log {{AUTOCLEANDAV_LOGS_DIR}}/error.log error;
 {% endif %}
 {% if AUTOCLEANDAV_NGINX_ERRORLOG_SYSLOG == "1" %}
     error_log syslog:server=127.0.0.1,facility={{AUTOCLEANDAV_NGINX_SYSLOG_FACILITY}},tag={{AUTOCLEANDAV_NGINX_SYSLOG_TAG}},severity=error error;
@@ -22,7 +22,7 @@ http {
     default_type  application/octet-stream;
 
     {% if AUTOCLEANDAV_NGINX_ACCESSLOG_FILE == "1" %}
-        access_log  /logs/access.log  combined;
+        access_log  {{AUTOCLEANDAV_LOGS_DIR}}/access.log  combined;
     {% endif %}
     {% if AUTOCLEANDAV_NGINX_ACCESSLOG_SYSLOG == "1" %}
         access_log syslog:server=127.0.0.1,facility={{AUTOCLEANDAV_NGINX_SYSLOG_FACILITY}},tag={{AUTOCLEANDAV_NGINX_SYSLOG_TAG}},severity=info combined;
@@ -34,7 +34,7 @@ http {
 
     sendfile        on;
     keepalive_timeout  65;
-    client_body_temp_path /data/temp/clientbody;
+    client_body_temp_path {{AUTOCLEANDAV_TEMP_DIR}}/clientbody;
     client_max_body_size {{AUTOCLEANDAV_NGINX_CLIENT_MAX_BODY_SIZE}};
 
     server {
@@ -43,7 +43,7 @@ http {
 
         location ~ ^/(.*)$ {
             aio threads;
-            root /data/storage;
+            root {{AUTOCLEANDAV_DATA_DIR}};
             dav_methods {{AUTOCLEANDAV_NGINX_DAV_METHODS}}; 
             autoindex on;
             create_full_put_path {{AUTOCLEANDAV_NGINX_CREATE_FULL_PUT_PATH}};

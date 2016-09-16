@@ -1,9 +1,12 @@
 #!/usr/bin/with-contenv bash
 
-groupdel nginx >/dev/null 2>&1
-groupadd --force --gid=${AUTOCLEANDAV_GID} nginx
-userdel nginx >/dev/null 2>&1
-useradd --no-create-home --home-dir=/data --no-user-group --non-unique --gid=${AUTOCLEANDAV_GID} --shell=/bin/nologin --uid=${AUTOCLEANDAV_UID} nginx
+#groupdel nginx >/dev/null 2>&1
+groupadd --force --gid=${AUTOCLEANDAV_GID} ${AUTOCLEANDAV_GROUP_NAME}
+# Creation du user seulement s'il n'existe pas deja
+getent passwd ${AUTOCLEANDAV_USER_NAME} > /dev/null
+if test $? -ne 0; then
+    useradd --no-create-home --home-dir=${AUTOCLEANDAV_USER_DIR} --no-user-group --non-unique --gid=${AUTOCLEANDAV_GID} --shell=/bin/nologin --uid=${AUTOCLEANDAV_UID} ${AUTOCLEANDAV_USER_NAME}
+fi
 
 if test ${AUTOCLEANDAV_LIFETIME} -gt 0; then
     if test ${AUTOCLEANDAV_LIFETIME} -lt 10; then
@@ -18,12 +21,12 @@ if test ${AUTOCLEANDAV_LIFETIME} -gt 0; then
     echo "${WHEN} root /usr/local/bin/autoclean_webdav_cleaning.sh >/dev/null 2>&1" >/etc/cron.d/autoclean_dav
 fi
 
-mkdir -p /logs >/dev/null 2>&1
-mkdir -p /data/storage >/dev/null 2>&1
-mkdir -p /data/temp >/dev/null 2>&1
-mkdir -p /data/temp/clientbody >/dev/null 2>&1
-chown -R nginx:nginx /data
-chown -R nginx:nginx /logs
+mkdir -p ${AUTOCLEANDAV_LOGS_DIR} >/dev/null 2>&1
+mkdir -p ${AUTOCLEANDAV_DATA_DIR} >/dev/null 2>&1
+mkdir -p ${AUTOCLEANDAV_TEMP_DIR} >/dev/null 2>&1
+mkdir -p ${AUTOCLEANDAV_TEMP_DIR}/clientbody >/dev/null 2>&1
+chown -R ${AUTOCLEANDAV_USER_NAME}:${AUTOCLEANDAV_GROUP_NAME} ${AUTOCLEANDAV_DATA_DIR}
+chown -R ${AUTOCLEANDAV_USER_NAME}:${AUTOCLEANDAV_GROUP_NAME} ${AUTOCLEANDAV_LOGS_DIR}
 
 echo "# GENERATED FROM /etc/nginx.conf.template" >/etc/nginx.conf
 cat /etc/nginx.conf.template |envtpl >>/etc/nginx.conf

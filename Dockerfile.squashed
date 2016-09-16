@@ -3,6 +3,12 @@ MAINTAINER Fabien MARTY <fabien.marty@gmail.com>
 
 ENV AUTOCLEANDAV_UID=500 \
     AUTOCLEANDAV_GID=500 \
+    AUTOCLEANDAV_USER_NAME=nginx \
+    AUTOCLEANDAV_GROUP_NAME=nginx \
+    AUTOCLEANDAV_USER_DIR=/data \
+    AUTOCLEANDAV_DATA_DIR=/data/storage \
+    AUTOCLEANDAV_TEMP_DIR=/data/temp \
+    AUTOCLEANDAV_LOGS_DIR=/logs \
     AUTOCLEANDAV_LIFETIME=60 \
     AUTOCLEANDAV_NGINX_WORKER_PROCESSES=auto \
     AUTOCLEANDAV_NGINX_WORKER_CONNECTIONS=1024 \
@@ -22,5 +28,4 @@ RUN /build/add_runtime_dependencies.sh && \
     /build/build_nginx.sh && \
     /build/remove_buildtime_dependencies.sh
 
-VOLUME ["/data", "/logs"]
 EXPOSE 80
